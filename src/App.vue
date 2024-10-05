@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ContactForm from './pages/IndexPage.vue'; // Import the form component
+import { RouterView } from 'vue-router'; // Import RouterView
 
 // See vite.config.ts for details about automatic imports
 const route = useRoute()
@@ -20,5 +20,5 @@ useHead({
 
 </script>
 <template>
-  <ContactForm />
+  <RouterView /> <!-- Replace ContactForm with RouterView -->
 </template>

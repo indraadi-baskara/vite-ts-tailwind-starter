@@ -1,28 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
-import DemoPage from '@/pages/DemoPage.vue'
-import IndexPage from '@/pages/IndexPage.vue'
-
-const routes = [
-  {
-    path: '/',
-    component: IndexPage,
-    meta: {
-      title: 'Vite + Vue + TypeScript + Tailwind Starter Template',
-    },
-  },
-  {
-    path: '/demo/',
-    component: DemoPage,
-    meta: {
-      title: 'Demo title',
-    },
-  },
-]
+import CustomerPage from '../pages/CustomerPage.vue'
+import HomePage from '../pages/IndexPage.vue'
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: HomePage,
+      meta: { title: 'Home' }
+    },
+    {
+      path: '/customer',
+      name: 'customer',
+      component: CustomerPage,
+      meta: { title: 'Customer' }
+    }
+  ]
 })
 
 export default router
