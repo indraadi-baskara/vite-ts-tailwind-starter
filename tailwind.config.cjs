@@ -13,6 +13,13 @@ module.exports = {
   //     },
   //   },
   // },
+  theme: {
+    extend: {
+      colors: {
+        'custom-gray': '#f5f5f5',
+      },
+    },
+  },
   plugins: [
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/typography'),
