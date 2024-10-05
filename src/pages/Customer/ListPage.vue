@@ -35,20 +35,24 @@
 </template>
 
 <script>
-import { loadCustomersFromLocalStorage } from '@/utils/customerUtils';
+import { storeToRefs } from 'pinia';
+import { useCustomerStore } from '../../store/useCustomerStore';
 
 export default {
   name: 'ListCustomerPage',
+  setup() {
+    const store = useCustomerStore();
+    const { customers } = storeToRefs(store);
+    return { customers };
+  },
   data() {
     return {
-      customers: [],
       searchQuery: '',
       filteredCustomers: []
     }
   },
   created() {
-    this.customers = loadCustomersFromLocalStorage()
-    this.filteredCustomers = this.customers
+    this.filteredCustomers = this.customers;
   },
   methods: {
     searchCustomers() {
@@ -57,9 +61,8 @@ export default {
         customer.email.toLowerCase().includes(this.searchQuery.toLowerCase())
       )
     },
-    // New method
     redirectToAddCustomer() {
-      this.$router.push('/add-customer') // Adjust this path as needed
+      this.$router.push('/add-customer')
     }
   }
 }

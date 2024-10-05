@@ -1,17 +1,19 @@
 <script setup lang="ts">
+import type { Customer } from '@/global';
+import { storeToRefs } from 'pinia';
 import { useField, useForm } from 'vee-validate';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import * as yup from 'yup';
+import { useCustomerStore } from '../../store/useCustomerStore';
 
-interface Contact {
-  id: number
-  name: string
-  phone: string
-  address?: string  // Optional address field
-}
+const router = useRouter();
+const route = useRoute();
+const store = useCustomerStore();
+const { customers } = storeToRefs(store);
 
 // CRUD form data
-const contacts = ref<Contact[]>([])
+const contacts = ref<Customer[]>([])
 
 // Load contacts from localStorage on component mount
 onMounted(() => {
@@ -45,7 +47,22 @@ const { value: name, errorMessage: nameError } = useField<string>('name');
 const { value: phone, errorMessage: phoneError } = useField<string>('phone');
 const { value: address } = useField<string>('address');
 
-const editingId = ref<number | null>(null);
+const editingId = ref<number | null>(route.params.id ? Number(route.params.id) : null);
+
+const currentCustomer = computed(() => {
+  if (editingId.value !== null) {
+    return store.getCustomerById(editingId.value);
+  }
+  return null;
+});
+
+onMounted(() => {
+  if (currentCustomer.value) {
+    name.value = currentCustomer.value.name;
+    phone.value = currentCustomer.value.phone;
+    address.value = currentCustomer.value.address || '';
+  }
+});
 
 const onSubmit = handleSubmit((values) => {
   if (editingId.value !== null) {
@@ -65,45 +82,34 @@ const onSubmit = handleSubmit((values) => {
 });
 
 const checkUniquePhone = (phone: string, editingId?: number) => {
-  if (editingId !== null) {
-    return !contacts.value.some(contact => contact.phone === phone && contact.id !== editingId);
-  }
-  return !contacts.value.some(contact => contact.phone === phone);
+  return !customers.value.some(customer => customer.phone === phone && customer.id !== editingId);
 }
 
-const addContact = (values: Partial<Contact>) => {
-  contacts.value.push({
+const addContact = (values: Partial<Customer>) => {
+  const newCustomer: Customer = {
     id: Date.now(),
     name: values.name!,
     phone: values.phone!.trim(),
     address: values.address
-  });
+  };
+  store.addCustomer(newCustomer);
   resetForm();
+  router.push('/customers');
 };
 
-const updateContact = (values: Partial<Contact>) => {
-  const index = contacts.value.findIndex(c => c.id === editingId.value);
-  if (index !== -1) {
-    contacts.value[index] = {
-      ...contacts.value[index],
-      ...values,
-      phone: values.phone!.trim()
+const updateContact = (values: Partial<Customer>) => {
+  if (editingId.value !== null) {
+    const updatedCustomer: Customer = {
+      id: editingId.value,
+      name: values.name!,
+      phone: values.phone!.trim(),
+      address: values.address
     };
+    store.updateCustomer(updatedCustomer);
   }
   resetForm();
+  router.push('/customers');
 };
-
-const editContact = (contact: Contact) => {
-  name.value = contact.name;
-  phone.value = contact.phone;
-  address.value = contact.address || '';
-  editingId.value = contact.id;
-};
-
-const deleteContact = (id: number) => {
-  contacts.value = contacts.value.filter(c => c.id !== id);
-};
-
 
 </script>
 
@@ -112,7 +118,7 @@ const deleteContact = (id: number) => {
     <p>
       <router-link to="/customers"> Back </router-link>
     </p>
-    <h2>Contact CRUD Form</h2>
+    <h2>Add Customer</h2>
     <form @submit="onSubmit" class="mb-4">
       <div class="mb-2">
         <label for="name" class="block">Name:</label>
@@ -132,14 +138,6 @@ const deleteContact = (id: number) => {
         {{ editingId !== null ? 'Update Contact' : 'Add Contact' }}
       </button>
     </form>
-
-    <h3>Contacts List</h3>
-    <ul>
-      <li v-for="contact in contacts" :key="contact.id" class="mb-2">
-        {{ contact.name }} - {{ contact.phone }}
-        <button @click="editContact(contact)" class="px-2 py-1 ml-2 text-white bg-green-500 rounded hover:bg-green-600">Edit</button>
-        <button @click="deleteContact(contact.id)" class="px-2 py-1 ml-2 text-white bg-red-500 rounded hover:bg-red-600">Delete</button>
-      </li>
-    </ul>
+    
   </div>
 </template>

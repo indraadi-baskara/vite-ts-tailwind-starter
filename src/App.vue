@@ -1,24 +1,14 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'; // Import RouterView
+import { useCustomerStore } from './store/useCustomerStore';
 
-// See vite.config.ts for details about automatic imports
-const route = useRoute()
+const store = useCustomerStore();
 
-useHead({
-  title: () => route.meta.title || 'Vite + Vue Template',
-  meta: [
-    {
-      property: 'og:title',
-      content: () => route.meta.title,
-    },
-    {
-      name: 'twitter:title',
-      content: () => route.meta.title,
-    },
-  ],
+onMounted(() => {
+  store.getInitApp()
 })
 
 </script>
 <template>
-  <RouterView /> <!-- Replace ContactForm with RouterView -->
+  <RouterView /> 
 </template>

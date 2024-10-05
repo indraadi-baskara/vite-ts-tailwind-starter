@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AddCustomerPage from '../pages/Customer/AddPage.vue'
 import ListCustomerPage from '../pages/Customer/ListPage.vue'
+import UpsertPage from '../pages/Customer/UpsertPage.vue'
 import HomePage from '../pages/IndexPage.vue'
 
 const router = createRouter({
@@ -21,8 +21,14 @@ const router = createRouter({
     {
       path: '/add-customer',
       name: 'add-customer',
-      component: AddCustomerPage,
+      component: UpsertPage,
       meta: { title: 'Add Customer' }
+    },
+    {
+      path: '/edit-customer/:id',
+      name: 'edit-customer',
+      component: UpsertPage,
+      meta: { title: 'Edit Customer' }
     }
   ]
 })
