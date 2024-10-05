@@ -34,3 +34,5 @@ LOCAL_NOTES.md
 /playwright/.cache
 package-lock.json
 *.tsbuildinfo
+
+importVue.ts
