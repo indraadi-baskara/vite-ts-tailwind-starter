@@ -34,6 +34,9 @@ export default defineConfig({
       dts: 'components.d.ts',
     }),
   ],
+  server: {
+    host: true,
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
