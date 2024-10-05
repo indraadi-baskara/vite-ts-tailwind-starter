@@ -2,7 +2,7 @@
 import ServiceHistoryCard from '../components/ServiceHistoryCard.vue'
 import type { TransactionDto } from '../types'
 
-const data: TransactionDto[] = [
+const transactions: TransactionDto[] = [
   {
     price: 100,
     currency: 'USD',
@@ -40,10 +40,50 @@ const data: TransactionDto[] = [
     createdAt: '2024-10-01T09:45:00Z',
   },
 ]
+
+const transactionsByDate = transactions.reduce(
+  (acc, current) => {
+    const timestamp = new Date(current.createdAt).toUTCString().split(' ').splice(0, 4).join(' ')
+    const items = [...(acc[timestamp]?.items || []), current]
+    const total = items.reduce((acc, current) => {
+      return acc + current.price
+    }, 0)
+
+    return {
+      ...acc,
+      [timestamp]: {
+        date: timestamp,
+        total: `USD ${total}`,
+        items,
+      },
+    }
+  },
+  {} as Record<
+    string,
+    {
+      date: string
+      total: string
+      items: TransactionDto[]
+    }
+  >
+)
 </script>
 
 <template>
-  <div>
-    <ServiceHistoryCard :transaction="data[0]" />
+  <div class="p-6 grid gap-y-2.5">
+    <div v-for="transactionDate in transactionsByDate" :key="transactionDate.date" class="pb-5 grid gap-y-3.5">
+      <div class="flex justify-between gap-x-6 items-center text-[#2A3256]">
+        <p class="text-xs leading-[14px]">{{ transactionDate.date }}</p>
+        <p class="font-medium text-base leading-[18px]">{{ transactionDate.total }}</p>
+      </div>
+
+      <div class="grid gap-y-2.5">
+        <ServiceHistoryCard
+          v-for="transaction in transactionsByDate[transactionDate.date].items"
+          :key="transaction.id"
+          :transaction
+        />
+      </div>
+    </div>
   </div>
 </template>
