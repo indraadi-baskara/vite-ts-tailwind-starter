@@ -1,5 +1,8 @@
 <template>
-  <div class="max-w-4xl mx-auto p-6">
+  <div class="max-w-4xl mx-auto p-6 relative h-screen w-full">
+    <p>
+      <router-link to="/"> Back </router-link>
+    </p>
     <h1 class="text-3xl font-bold mb-6">Customer List</h1>
     
     <div class="mb-6">
@@ -21,6 +24,13 @@
     <p v-if="filteredCustomers.length === 0" class="text-gray-500 text-center mt-4">
       No customers found.
     </p>
+
+    <!-- New button -->
+    <div class="mt-8 text-center absolute bottom-5 left-0 right-0">
+      <button @click="redirectToAddCustomer" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+        Add New Customer
+      </button>
+    </div>
   </div>
 </template>
 
@@ -46,6 +56,10 @@ export default {
         customer.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         customer.email.toLowerCase().includes(this.searchQuery.toLowerCase())
       )
+    },
+    // New method
+    redirectToAddCustomer() {
+      this.$router.push('/add-customer') // Adjust this path as needed
     }
   }
 }
