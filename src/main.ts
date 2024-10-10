@@ -1,6 +1,7 @@
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import InputText from 'primevue/inputtext'
+import Textarea from 'primevue/textarea'
 import { createApp } from 'vue'
 import App from './App.vue'
 import './assets/index.postcss'
@@ -11,6 +12,7 @@ app.use(PrimeVue, {
   unstyled: true
 });
 app.component('InputText', InputText)
+app.component('Textarea', Textarea)
 
 const pinia = createPinia()
 

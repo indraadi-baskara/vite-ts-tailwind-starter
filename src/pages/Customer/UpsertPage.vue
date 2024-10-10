@@ -30,7 +30,9 @@ watch(contacts, (newContacts) => {
 
 const schema = yup.object({
   name: yup.string().required('Name is required'),
-  phone: yup.string().required('Phone is required'),
+  phone: yup.string()
+    .required('Phone is required')
+    .matches(/^(62|0)8\d{8}$/, 'Phone number must start with 628x or 08x followed by 8 digits'),
   address: yup.string()
 });
 
@@ -114,28 +116,29 @@ const updateContact = (values: Partial<Customer>) => {
 </script>
 
 <template>
-  <div class="p-4 mx-auto prose md:px-6 prose-indigo sm:rounded-md h-screen">
+  <div class="p-6 mx-auto prose md:px-6 prose-indigo sm:rounded-md h-screen">
     <p>
       <router-link to="/customers"> Back </router-link>
     </p>
-    <h2>Add Customer</h2>
+    <h2 v-if="editingId !== null">Ubah pelanggan</h2>
+    <h2 v-else>Tambah pelanggan</h2>
     <form @submit="onSubmit" class="mb-4 flex flex-col h-[calc(100%-140px)]">
       <div class="mb-2">
-        <label for="name" class="block">Name:</label>
-        <input id="name" v-model="name" type="text" class="w-full p-5 border rounded border-none" style="background: rgba(0, 0, 0, 0.05);">
+        <label for="name" class="block text-base pb-2.5 text-[#2A3256]">Nama Pelanggan</label>
+        <InputText id="name" name="name" v-model="name" type="text" class="rounded-2xl w-full p-5 border border-none" style="background: rgba(0, 0, 0, 0.05);" autocomplete="off" placeholder="contoh: John Doe"/>
         <p v-if="nameError" class="text-red-500 text-sm mt-1">{{ nameError }}</p>
       </div>
       <div class="mb-2">
-        <label for="phone" class="block">Phone:</label>
-        <InputText id="phone" v-model="phone" type="tel" class="w-full p-5 rounded border-none"  style="background: rgba(0, 0, 0, 0.05);"/>
+        <label for="phone" class="block text-base pb-2.5">Nomor Telepon:</label>
+        <InputText id="phone" name="phone" v-model="phone" type="tel" class="rounded-2xl w-full p-5 border-none"  style="background: rgba(0, 0, 0, 0.05);" autocomplete="off" placeholder="contoh: 6285xxxxxxxx or 085xxxxxxxx"/>
         <p v-if="phoneError" class="text-red-500 text-sm mt-1">{{ phoneError }}</p>
       </div>
       <div class="mb-2">
-        <label for="address" class="block">Address:</label>
-        <input id="address" v-model="address" type="text" class="w-full p-5 border rounded border-none" style="background: rgba(0, 0, 0, 0.05);">
+        <label for="address" class="block text-base pb-2.5">Alamat:</label>
+        <Textarea id="address" name="address" v-model="address" type="text" class="rounded-2xl w-full p-5 border border-none min-h-28" style="background: rgba(0, 0, 0, 0.05);" autocomplete="off"/>
       </div>
-      <button type="submit" class="p-5 w-full mt-auto text-white bg-blue-500 rounded hover:bg-blue-600">
-        {{ editingId !== null ? 'Update Contact' : 'Add Contact' }}
+      <button type="submit" class="text-base font-medium p-5 w-full mt-auto text-white bg-blue-500 rounded hover:bg-blue-600">
+        {{ editingId !== null ? 'Ubah pelanggan' : 'Tambah pelanggan' }}
       </button>
     </form>
     
